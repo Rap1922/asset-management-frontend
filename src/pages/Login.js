@@ -17,34 +17,34 @@ export default function LoginRegister() {
 
   // Fetch daftar perusahaan dari backend
   useEffect(() => {
-    axios.get("http://localhost:5000/companies/list")
+    axios.get("https://asset-management-backend-production.up.railway.app/companies/list")
       .then((res) => setCompanies(res.data))
       .catch(() => setError("Gagal memuat daftar perusahaan."));
-  }, []);
+}, []);
 
-  // Handle Login
-  const handleLogin = async (e) => {
+// Handle Login
+const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:5000/login", { email, password, perusahaan_id: perusahaan });
+      const res = await axios.post("https://asset-management-backend-production.up.railway.app/login", { email, password, perusahaan_id: perusahaan });
       localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
     } catch (err) {
       setError("Login gagal. Periksa email, password, dan perusahaan.");
     }
-  };
+};
 
-  // Handle Registrasi
-  const handleRegister = async (e) => {
+// Handle Registrasi
+const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/register", { nama, email, password, role_id: role, perusahaan_id: perusahaan });
+      await axios.post("https://asset-management-backend-production.up.railway.app/register", { nama, email, password, role_id: role, perusahaan_id: perusahaan });
       alert("Registrasi berhasil! Silakan login.");
       setIsRegister(false);
     } catch (err) {
       setError("Registrasi gagal. Periksa kembali data Anda.");
     }
-  };
+};
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">

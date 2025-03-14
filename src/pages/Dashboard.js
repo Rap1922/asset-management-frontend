@@ -20,7 +20,7 @@ export default function Dashboard() {
       return;
     }
 
-    axios.get(`http://localhost:5000/assets?page=${page}&limit=${limit}`, {
+    axios.get(`https://asset-management-backend-production.up.railway.app/assets?page=${page}&limit=${limit}`, {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
@@ -32,7 +32,7 @@ export default function Dashboard() {
         console.error("❌ Gagal mengambil data aset:", err);
     });
 
-    axios.get("http://localhost:5000/assets/stats", {
+    axios.get("https://asset-management-backend-production.up.railway.app/assets/stats", {
       headers: { Authorization: `Bearer ${token}` }
     })
     .then(res => {
