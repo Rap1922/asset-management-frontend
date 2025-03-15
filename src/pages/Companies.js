@@ -14,7 +14,7 @@ export default function Companies() {
 
   const fetchCompanies = () => {
     axios
-      .get("http://localhost:5000/companies")
+      .get("https://asset-management-backend-production.up.railway.app/companies")
       .then((res) => setCompanies(res.data))
       .catch((err) => console.error("Gagal mengambil data perusahaan:", err));
   };
@@ -26,7 +26,7 @@ export default function Companies() {
     }
 
     axios
-      .post("http://localhost:5000/companies", form)
+      .post("https://asset-management-backend-production.up.railway.app/companies", form)
       .then(() => {
         setForm({ kode: "", nama_perusahaan: "" });
         setError("");
@@ -42,7 +42,7 @@ export default function Companies() {
     }
 
     axios
-      .put(`http://localhost:5000/companies/${editCompany.id}`, editCompany)
+      .put(`https://asset-management-backend-production.up.railway.app/companies/${editCompany.id}`, editCompany)
       .then(() => {
         setIsModalOpen(false);
         setError("");
@@ -55,7 +55,7 @@ export default function Companies() {
     if (!window.confirm("Yakin ingin menghapus perusahaan ini?")) return;
 
     axios
-      .delete(`http://localhost:5000/companies/${id}`)
+      .delete(`https://asset-management-backend-production.up.railway.app/companies/${id}`)
       .then(() => fetchCompanies())
       .catch((err) => console.error("Gagal menghapus perusahaan:", err));
   };

@@ -29,7 +29,7 @@ export default function Locations() {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await axios.get("http://localhost:5000/locations", {
+      const response = await axios.get("https://asset-management-backend-production.up.railway.app/locations", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLocations(response.data);
@@ -57,7 +57,7 @@ export default function Locations() {
 
     const token = localStorage.getItem("token");
     axios
-      .post("http://localhost:5000/locations", form, {
+      .post("https://asset-management-backend-production.up.railway.app/locations", form, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {

@@ -29,7 +29,7 @@ export default function Departments() {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await axios.get("http://localhost:5000/departments", {
+      const response = await axios.get("https://asset-management-backend-production.up.railway.app/departments", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDepartments(response.data);
@@ -57,7 +57,7 @@ export default function Departments() {
 
     const token = localStorage.getItem("token");
     axios
-      .post("http://localhost:5000/departments", form, { headers: { Authorization: `Bearer ${token}` } })
+      .post("https://asset-management-backend-production.up.railway.app/departments", form, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setForm({ kode: "", nama_departments: "" });
         setError("");
@@ -75,7 +75,7 @@ export default function Departments() {
 
     const token = localStorage.getItem("token");
     axios
-      .put(`http://localhost:5000/departments/${editDepartment.id}`, editDepartment, {
+      .put(`https://asset-management-backend-production.up.railway.app/departments/${editDepartment.id}`, editDepartment, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
@@ -92,7 +92,7 @@ export default function Departments() {
 
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://localhost:5000/departments/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+      .delete(`https://asset-management-backend-production.up.railway.app/departments/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => fetchDepartments())
       .catch((err) => console.error("Gagal menghapus departemen:", err));
   };

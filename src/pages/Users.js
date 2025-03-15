@@ -27,19 +27,19 @@ export default function Users() {
   }, []);
 
   const fetchUsers = (token) => {
-    axios.get("http://localhost:5000/users", { headers: { Authorization: `Bearer ${token}` } })
+    axios.get("https://asset-management-backend-production.up.railway.app/users", { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setUsers(res.data))
       .catch(err => console.error("Gagal mengambil data user:", err));
   };
 
   const fetchRoles = (token) => {
-    axios.get("http://localhost:5000/roles", { headers: { Authorization: `Bearer ${token}` } })
+    axios.get("https://asset-management-backend-production.up.railway.app/roles", { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setRoles(res.data))
       .catch(err => console.error("Gagal mengambil data role:", err));
   };
 
   const fetchCompanies = (token) => {
-    axios.get("http://localhost:5000/companies/list", { headers: { Authorization: `Bearer ${token}` } })
+    axios.get("https://asset-management-backend-production.up.railway.app/companies/list", { headers: { Authorization: `Bearer ${token}` } })
       .then(res => setCompanies(res.data))
       .catch(err => console.error("Gagal mengambil data perusahaan:", err));
   };
@@ -51,7 +51,7 @@ export default function Users() {
     }
 
     const token = localStorage.getItem("token");
-    axios.post("http://localhost:5000/users", form, { headers: { Authorization: `Bearer ${token}` } })
+    axios.post("https://asset-management-backend-production.up.railway.app/users", form, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setForm({ nama: "", email: "", password: "", role_id: "", perusahaan_id: "" });
         setError("");
@@ -74,7 +74,7 @@ export default function Users() {
       updatedData.password = editPassword;
     }
 
-    axios.put(`http://localhost:5000/users/${editUser.id}`, updatedData, { headers: { Authorization: `Bearer ${token}` } })
+    axios.put(`https://asset-management-backend-production.up.railway.app/users/${editUser.id}`, updatedData, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setIsModalOpen(false);
         setEditPassword(""); // Reset password setelah update
@@ -88,7 +88,7 @@ export default function Users() {
     if (!window.confirm("Yakin ingin menghapus user ini?")) return;
 
     const token = localStorage.getItem("token");
-    axios.delete(`http://localhost:5000/users/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+    axios.delete(`https://asset-management-backend-production.up.railway.app/users/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => fetchUsers(token))
       .catch(err => console.error("Gagal menghapus user:", err));
   };

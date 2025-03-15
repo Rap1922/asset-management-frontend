@@ -23,7 +23,7 @@ export default function ChangePassword() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "http://localhost:5000/change-password",
+        "https://asset-management-backend-production.up.railway.app/change-password",
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );

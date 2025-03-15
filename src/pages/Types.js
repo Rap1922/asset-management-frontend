@@ -31,7 +31,7 @@ const fetchTypes = () => {
     console.log("🔍 Token Dikirim:", token); // ✅ Debug apakah token benar dikirim
 
     axios
-      .get("http://localhost:5000/types", {
+      .get("https://asset-management-backend-production.up.railway.app/types", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -48,7 +48,7 @@ const fetchTypes = () => {
 const fetchCategories = () => {
   const token = localStorage.getItem("token");
 
-  axios.get("http://localhost:5000/categories", {
+  axios.get("https://asset-management-backend-production.up.railway.app/categories", {
     headers: { Authorization: `Bearer ${token}` },
   })
     .then((res) => {
@@ -82,7 +82,7 @@ const fetchCategories = () => {
 
     const token = localStorage.getItem("token");
     axios
-      .post("http://localhost:5000/types", form, { headers: { Authorization: `Bearer ${token}` } })
+      .post("https://asset-management-backend-production.up.railway.app/types", form, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setForm({ kategori_id: "", kode: "", nama_asset: "" });
         setError("");
@@ -102,7 +102,7 @@ const fetchCategories = () => {
 
     const token = localStorage.getItem("token");
     axios
-      .put(`http://localhost:5000/types/${editType.id}`, editType, { headers: { Authorization: `Bearer ${token}` } })
+      .put(`https://asset-management-backend-production.up.railway.app/types/${editType.id}`, editType, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
         setIsModalOpen(false);
         setError("");
@@ -115,7 +115,7 @@ const fetchCategories = () => {
     if (!window.confirm("Yakin ingin menghapus jenis ini?")) return;
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://localhost:5000/types/${id}`, { headers: { Authorization: `Bearer ${token}` } })
+      .delete(`https://asset-management-backend-production.up.railway.app/types/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => fetchTypes())
       .catch((err) => console.error("❌ Gagal menghapus jenis:", err));
   };

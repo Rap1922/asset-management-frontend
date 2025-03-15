@@ -65,7 +65,7 @@ export default function ScanAsset() {
 
     try {
       console.log("🔍 Fetching:", kodeAsset);
-      const response = await axios.get(`http://localhost:5000/assets/${kodeAsset}`, {
+      const response = await axios.get(`https://asset-management-backend-production.up.railway.app/assets/${kodeAsset}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

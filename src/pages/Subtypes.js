@@ -31,7 +31,7 @@ export default function Subtypes() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await axios.get("http://localhost:5000/subtypes", {
+      const res = await axios.get("https://asset-management-backend-production.up.railway.app/subtypes", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -47,7 +47,7 @@ export default function Subtypes() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await axios.get("http://localhost:5000/types", {
+      const res = await axios.get("https://asset-management-backend-production.up.railway.app/types", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -69,7 +69,7 @@ export default function Subtypes() {
     const token = localStorage.getItem("token");
 
     try {
-      await axios.post("http://localhost:5000/subtypes", form, {
+      await axios.post("https://asset-management-backend-production.up.railway.app/subtypes", form, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -101,7 +101,7 @@ export default function Subtypes() {
     try {
       console.log("📤 Mengirim data edit ke server:", editSubtype); // Debugging
   
-      const response = await axios.put(`http://localhost:5000/subtypes/${editSubtype.id}`, 
+      const response = await axios.put(`https://asset-management-backend-production.up.railway.app/subtypes/${editSubtype.id}`, 
         {
           jenis_id: editSubtype.jenis_id, 
           kode: editSubtype.kode, 
@@ -138,7 +138,7 @@ export default function Subtypes() {
     const token = localStorage.getItem("token");
 
     try {
-      await axios.delete(`http://localhost:5000/subtypes/${id}`, {
+      await axios.delete(`https://asset-management-backend-production.up.railway.app/subtypes/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

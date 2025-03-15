@@ -60,7 +60,7 @@ export default function Assets() {
     try {
       console.log("📡 Fetching asset data...");
       const response = await axios.get(
-        `http://localhost:5000/assets?page=${currentPage}&limit=${itemsPerPage}&status=${status}`, 
+        `https://asset-management-backend-production.up.railway.app/assets?page=${currentPage}&limit=${itemsPerPage}&status=${status}`, 
         { headers }
       );
   
@@ -87,21 +87,21 @@ export default function Assets() {
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
 
-    axios.get("http://localhost:5000/departments", { headers })
+    axios.get("https://asset-management-backend-production.up.railway.app/departments", { headers })
       .then((res) => {
         console.log("✅ Departemen diterima:", res.data);
         setDepartments(res.data || []);
       })
       .catch((err) => console.error("❌ Gagal mengambil departemen:", err));
 
-    axios.get("http://localhost:5000/locations", { headers })
+    axios.get("https://asset-management-backend-production.up.railway.app/locations", { headers })
       .then((res) => {
         console.log("✅ Lokasi diterima:", res.data);
         setLocations(res.data || []);
       })
       .catch((err) => console.error("❌ Gagal mengambil lokasi:", err));
 
-    axios.get("http://localhost:5000/categories", { headers })
+    axios.get("https://asset-management-backend-production.up.railway.app/categories", { headers })
       .then((res) => {
         console.log("✅ Kategori diterima:", res.data);
         setCategories(res.data || []);
@@ -139,7 +139,7 @@ export default function Assets() {
     const token = localStorage.getItem("token");
     const headers = { Authorization: `Bearer ${token}` };
 
-    axios.get(`http://localhost:5000/types`, { headers })
+    axios.get(`https://asset-management-backend-production.up.railway.app/types`, { headers })
         .then((res) => {
             console.log(`Mengambil data jenis aset untuk kategori: ${kategori_id}`);
             console.log("Data jenis diterima:", res.data);
@@ -169,7 +169,7 @@ export default function Assets() {
       const token = localStorage.getItem("token");
       const headers = { Authorization: `Bearer ${token}` };
     
-      axios.get(`http://localhost:5000/subtypes?jenis_id=${jenis_id}`, { headers })
+      axios.get(`https://asset-management-backend-production.up.railway.app/subtypes?jenis_id=${jenis_id}`, { headers })
         .then((res) => {
           console.log("✅ Data sub-jenis diterima:", res.data);
     
@@ -240,7 +240,7 @@ export default function Assets() {
     
         console.log("📡 Mengirim data aset:", newAsset);
         
-        const response = await axios.post("http://localhost:5000/assets", newAsset, { headers });
+        const response = await axios.post("https://asset-management-backend-production.up.railway.app/assets", newAsset, { headers });
         console.log("✅ Aset berhasil ditambahkan!", response.data);
     
         // 🔄 Refresh daftar aset setelah berhasil menambahkan
@@ -283,7 +283,7 @@ export default function Assets() {
   
       try {
           console.log(`🗑 Mengubah status aset dengan ID: ${id} menjadi 'deleted'`);
-          await axios.put(`http://localhost:5000/assets/${id}`, { status: "deleted" }, { headers });
+          await axios.put(`https://asset-management-backend-production.up.railway.app/assets/${id}`, { status: "deleted" }, { headers });
   
           console.log("✅ Aset berhasil dihapus (status 'deleted')!");
           fetchAssets(); // 🔄 Refresh daftar aset
@@ -307,7 +307,7 @@ export default function Assets() {
   
       try {
           console.log(`♻️ Mengembalikan aset dengan ID: ${id} menjadi 'active'`);
-          await axios.put(`http://localhost:5000/assets/${id}`, { status: "active" }, { headers });
+          await axios.put(`https://asset-management-backend-production.up.railway.app/assets/${id}`, { status: "active" }, { headers });
   
           console.log("✅ Aset berhasil dikembalikan menjadi 'active'!");
           fetchAssets(); // 🔄 Refresh daftar aset
