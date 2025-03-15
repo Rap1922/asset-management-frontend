@@ -26,7 +26,7 @@ export default function Categories() {
   const fetchCategories = async () => {
     const token = localStorage.getItem("token");
     try {
-      const response = await axios.get("http://localhost:5000/categories", {
+      const response = await axios.get("https://asset-management-backend-production.up.railway.app/categories", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCategories(response.data);
@@ -55,7 +55,7 @@ export default function Categories() {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.post("http://localhost:5000/categories", form, {
+      await axios.post("https://asset-management-backend-production.up.railway.app/categories", form, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setForm({ kode: "", nama_kategori: "" });
@@ -77,7 +77,7 @@ export default function Categories() {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.put(`http://localhost:5000/categories/${editCategory.id}`, editCategory, {
+      await axios.put(`https://asset-management-backend-production.up.railway.app/categories/${editCategory.id}`, editCategory, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsModalOpen(false);
@@ -95,7 +95,7 @@ export default function Categories() {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`http://localhost:5000/categories/${id}`, {
+      await axios.delete(`https://asset-management-backend-production.up.railway.app/categories/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchCategories();
