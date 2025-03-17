@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader } from "@zxing/library";
+import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/library"; // 🔥 Tambahkan BarcodeFormat
 import axios from "axios";
 import { FiCamera, FiSearch, FiXCircle } from "react-icons/fi";
 
@@ -8,69 +8,81 @@ export default function ScanAsset() {
   const [manualCode, setManualCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isScanning, setIsScanning] = useState(false); // 🔥 Scanner aktif/tidak
+  const [isScanning, setIsScanning] = useState(false);
+  const [scannedCode, setScannedCode] = useState(""); // 🔥 Simpan kode yang discan
   const videoRef = useRef(null);
   const codeReaderRef = useRef(null);
-  // ✅ Simpan deviceId kamera yang dipilih sebelumnya
-const selectedCameraRef = useRef(null);
+  const selectedCameraRef = useRef(null);
 
+  // ✅ Mulai Scan Saat Tombol Diklik
+  const startScanner = () => {
+    setIsScanning(true);
+    setScannedCode(""); // 🔥 Reset barcode sebelumnya
+    const codeReader = new BrowserMultiFormatReader();
+    codeReaderRef.current = codeReader;
 
-// ✅ Mulai Scan Saat Tombol Diklik
-const startScanner = () => {
-  setIsScanning(true);
-  const codeReader = new BrowserMultiFormatReader();
-  codeReaderRef.current = codeReader;
+    codeReader
+      .listVideoInputDevices()
+      .then((videoDevices) => {
+        if (videoDevices.length === 0) {
+          setError("❌ Kamera tidak ditemukan!");
+          return;
+        }
 
-  codeReader
-    .listVideoInputDevices()
-    .then((videoDevices) => {
-      if (videoDevices.length === 0) {
-        setError("❌ Kamera tidak ditemukan!");
-        return;
-      }
+        let selectedDeviceId;
+        if (selectedCameraRef.current) {
+          selectedDeviceId = selectedCameraRef.current;
+        } else {
+          let backCamera = videoDevices.find(device => 
+            device.label.toLowerCase().includes("back") || 
+            device.label.toLowerCase().includes("environment")
+          );
 
-      let selectedDeviceId;
+          selectedDeviceId = backCamera ? backCamera.deviceId : videoDevices[0].deviceId;
+          selectedCameraRef.current = selectedDeviceId;
+        }
 
-      if (selectedCameraRef.current) {
-        // ✅ Gunakan kamera yang sudah dipilih sebelumnya
-        selectedDeviceId = selectedCameraRef.current;
-      } else {
-        // 🔹 Cari kamera belakang jika pertama kali scan
-        let backCamera = videoDevices.find(device => 
-          device.label.toLowerCase().includes("back") || 
-          device.label.toLowerCase().includes("environment")
+        // ✅ Pilih format barcode yang didukung
+        const formats = [
+          BarcodeFormat.QR_CODE, 
+          BarcodeFormat.CODE_128, 
+          BarcodeFormat.CODE_39, 
+          BarcodeFormat.EAN_13,
+          BarcodeFormat.UPC_A,
+          BarcodeFormat.UPC_E
+        ];
+
+        codeReader.decodeFromVideoDevice(
+          selectedDeviceId, 
+          videoRef.current, 
+          (result, err) => {
+            if (result) {
+              const scannedText = result.getText();
+              console.log("✅ Barcode scanned:", scannedText);
+              setScannedCode(scannedText); // 🔥 Simpan barcode untuk ditampilkan di popup
+              fetchAssetDetail(scannedText);
+              stopScanner();
+            }
+            if (err) {
+              console.warn("⚠ QR Code error:", err);
+            }
+          },
+          { formats } // 🔥 Pilih format barcode
         );
-
-        // Jika tidak ada kamera belakang, gunakan kamera pertama
-        selectedDeviceId = backCamera ? backCamera.deviceId : videoDevices[0].deviceId;
-        selectedCameraRef.current = selectedDeviceId; // 🔥 Simpan kamera yang dipilih
-      }
-
-      // ✅ Mulai scanning dengan kamera yang sudah disimpan
-      codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
-        if (result) {
-          console.log("✅ Barcode scanned:", result.getText());
-          fetchAssetDetail(result.getText());
-          stopScanner(); // Matikan scanner setelah sukses scan
-        }
-        if (err) {
-          console.warn("⚠ QR Code error:", err);
-        }
+      })
+      .catch((err) => {
+        console.error("❌ Kamera Error:", err);
+        setError("❌ Tidak dapat mengakses kamera.");
       });
-    })
-    .catch((err) => {
-      console.error("❌ Kamera Error:", err);
-      setError("❌ Tidak dapat mengakses kamera.");
-    });
-};
+  };
 
-// ✅ Hentikan Scanner
-const stopScanner = () => {
-  if (codeReaderRef.current) {
-    codeReaderRef.current.reset();
-    setIsScanning(false);
-  }
-};
+  // ✅ Hentikan Scanner
+  const stopScanner = () => {
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+      setIsScanning(false);
+    }
+  };
 
   // ✅ Fetch data aset berdasarkan kode
   const fetchAssetDetail = async (kodeAsset) => {
@@ -86,9 +98,10 @@ const stopScanner = () => {
 
     try {
       console.log("🔍 Fetching:", kodeAsset);
-      const response = await axios.get(`https://asset-management-backend-production.up.railway.app/assets/${kodeAsset}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `https://asset-management-backend-production.up.railway.app/assets/${kodeAsset}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
       console.log("✅ API Response:", response.data);
       setScanResult(response.data);
@@ -123,38 +136,44 @@ const stopScanner = () => {
         </div>
       )}
 
-{/* 🔹 INPUT MANUAL */}
-<div className="mt-6 w-full max-w-md">
-  <h3 className="text-lg font-semibold mb-2 flex items-center">
-    <FiSearch className="mr-2" /> Masukkan Kode Aset
-  </h3>
-  <div className="flex">
-    <input
-      type="text"
-      placeholder="Masukkan kode aset..."
-      className="p-3 border rounded-l-lg flex-grow"
-      value={manualCode}
-      onChange={(e) => setManualCode(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          fetchAssetDetail(manualCode);
-          setManualCode(""); // Mengosongkan input setelah Enter ditekan
-        }
-      }}
-    />
-    <button
-      className="px-4 bg-blue-600 text-white rounded-r-lg"
-      onClick={() => {
-        fetchAssetDetail(manualCode);
-        setManualCode(""); // Mengosongkan input setelah tombol diklik
-      }}
-    >
-      🔍 Cari
-    </button>
-  </div>
-</div>
+      {/* 🔹 POPUP HASIL SCAN */}
+      {scannedCode && (
+        <div className="fixed top-5 right-5 bg-white shadow-lg p-4 rounded-lg border">
+          <h3 className="text-md font-semibold">✅ Barcode Terbaca</h3>
+          <p className="text-lg font-bold text-blue-600">{scannedCode}</p>
+        </div>
+      )}
 
-
+      {/* 🔹 INPUT MANUAL */}
+      <div className="mt-6 w-full max-w-md">
+        <h3 className="text-lg font-semibold mb-2 flex items-center">
+          <FiSearch className="mr-2" /> Masukkan Kode Aset
+        </h3>
+        <div className="flex">
+          <input
+            type="text"
+            placeholder="Masukkan kode aset..."
+            className="p-3 border rounded-l-lg flex-grow"
+            value={manualCode}
+            onChange={(e) => setManualCode(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                fetchAssetDetail(manualCode);
+                setManualCode(""); 
+              }
+            }}
+          />
+          <button
+            className="px-4 bg-blue-600 text-white rounded-r-lg"
+            onClick={() => {
+              fetchAssetDetail(manualCode);
+              setManualCode(""); 
+            }}
+          >
+            🔍 Cari
+          </button>
+        </div>
+      </div>
 
       {/* 🔹 ERROR MESSAGE */}
       {error && (
@@ -172,7 +191,7 @@ const stopScanner = () => {
           <p><strong>Departemen:</strong> {scanResult.nama_departments}</p>
           <p><strong>Lokasi:</strong> {scanResult.nama_lokasi}</p>
           <p><strong>Jenis Aset:</strong> {scanResult.jenis_aset}</p>
-          <p><strong>Sub Jenis Aset:</strong> {scanResult.sub_jenis_aset}</p> {/* 🔥 Tambahan Sub Jenis Aset */}
+          <p><strong>Sub Jenis Aset:</strong> {scanResult.sub_jenis_aset}</p>
         </div>
       )}
     </div>
