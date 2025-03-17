@@ -14,7 +14,7 @@ export default function ScanAsset() {
   const codeReaderRef = useRef(null);
   const selectedCameraRef = useRef(null);
 
-  // 🔹 **Hapus popup setelah 3 detik**
+  // 🔹 **Hapus popup setelah 2 detik**
   useEffect(() => {
     if (scannedCode) {
       const timer = setTimeout(() => {
@@ -147,8 +147,7 @@ export default function ScanAsset() {
 
       {/* 🔹 POPUP HASIL SCAN (Di Tengah Layar & Hilang Setelah 3 Detik) */}
       {scannedCode && (
-        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                        bg-white shadow-lg p-6 rounded-lg border border-gray-300 text-center z-50">
+       <div className="fixed top-5 right-5 bg-white shadow-lg p-4 rounded-lg border">
           <h3 className="text-md font-semibold">✅ Barcode Terbaca</h3>
           <p className="text-xl font-bold text-blue-600">{scannedCode}</p>
         </div>
