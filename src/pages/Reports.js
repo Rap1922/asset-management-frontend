@@ -49,7 +49,7 @@ export default function AssetReports() {
       console.log("📡 Fetching asset data...");
       console.log("🔹 Filter yang dikirim:", filters);
 
-      const response = await axios.get(`http://localhost:5000/assets`, {
+      const response = await axios.get(`https://asset-management-backend-production.up.railway.app/assets`, {
         headers,
         params: {
           company: filters.company || "",
@@ -78,10 +78,10 @@ export default function AssetReports() {
 
     try {
       const [companiesRes, departmentsRes, categoriesRes, typesRes] = await Promise.all([
-        axios.get("http://localhost:5000/companies", { headers }),
-        axios.get("http://localhost:5000/departments", { headers }),
-        axios.get("http://localhost:5000/categories", { headers }),
-        axios.get("http://localhost:5000/types", { headers }),
+        axios.get("https://asset-management-backend-production.up.railway.app/companies", { headers }),
+        axios.get("https://asset-management-backend-production.up.railway.app/departments", { headers }),
+        axios.get("https://asset-management-backend-production.up.railway.app/categories", { headers }),
+        axios.get("https://asset-management-backend-production.up.railway.app/types", { headers }),
       ]);
 
       setCompanies(companiesRes.data || []);

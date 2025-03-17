@@ -13,35 +13,46 @@ export default function ScanAsset() {
   const codeReaderRef = useRef(null);
 
   // ✅ Mulai Scan Saat Tombol Diklik
-  const startScanner = () => {
-    setIsScanning(true);
-    const codeReader = new BrowserMultiFormatReader();
-    codeReaderRef.current = codeReader;
-    
-    codeReader
-      .listVideoInputDevices()
-      .then((videoDevices) => {
-        if (videoDevices.length > 0) {
-          const firstDeviceId = videoDevices[0].deviceId;
-          codeReader.decodeFromVideoDevice(firstDeviceId, videoRef.current, (result, err) => {
-            if (result) {
-              console.log("✅ Barcode scanned:", result.getText());
-              fetchAssetDetail(result.getText());
-              stopScanner(); // Matikan scanner setelah sukses scan
-            }
-            if (err) {
-              console.warn("⚠ QR Code error:", err);
-            }
-          });
-        } else {
-          setError("❌ Kamera tidak ditemukan!");
+const startScanner = () => {
+  setIsScanning(true);
+  const codeReader = new BrowserMultiFormatReader();
+  codeReaderRef.current = codeReader;
+
+  codeReader
+    .listVideoInputDevices()
+    .then((videoDevices) => {
+      if (videoDevices.length === 0) {
+        setError("❌ Kamera tidak ditemukan!");
+        return;
+      }
+
+      // 🔹 Cari kamera belakang (jika ada)
+      let backCamera = videoDevices.find(device => 
+        device.label.toLowerCase().includes("back") || 
+        device.label.toLowerCase().includes("environment")
+      );
+
+      // Jika tidak ditemukan kamera belakang, gunakan kamera pertama
+      const selectedDeviceId = backCamera ? backCamera.deviceId : videoDevices[0].deviceId;
+
+      // ✅ Mulai scanning dari kamera yang dipilih
+      codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
+        if (result) {
+          console.log("✅ Barcode scanned:", result.getText());
+          fetchAssetDetail(result.getText());
+          stopScanner(); // Matikan scanner setelah sukses scan
         }
-      })
-      .catch((err) => {
-        console.error("❌ Kamera Error:", err);
-        setError("❌ Tidak dapat mengakses kamera.");
+        if (err) {
+          console.warn("⚠ QR Code error:", err);
+        }
       });
-  };
+    })
+    .catch((err) => {
+      console.error("❌ Kamera Error:", err);
+      setError("❌ Tidak dapat mengakses kamera.");
+    });
+};
+
 
   // ✅ Hentikan Scanner
   const stopScanner = () => {

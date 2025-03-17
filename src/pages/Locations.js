@@ -77,7 +77,7 @@ export default function Locations() {
 
     const token = localStorage.getItem("token");
     axios
-      .put(`http://localhost:5000/locations/${editLocation.id}`, editLocation, {
+      .put(`https://asset-management-backend-production.up.railway.app/${editLocation.id}`, editLocation, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => {
@@ -94,7 +94,7 @@ export default function Locations() {
 
     const token = localStorage.getItem("token");
     axios
-      .delete(`http://localhost:5000/locations/${id}`, {
+      .delete(`https://asset-management-backend-production.up.railway.app/locations/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then(() => fetchLocations())
