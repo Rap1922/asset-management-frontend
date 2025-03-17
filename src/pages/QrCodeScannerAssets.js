@@ -11,8 +11,11 @@ export default function ScanAsset() {
   const [isScanning, setIsScanning] = useState(false); // 🔥 Scanner aktif/tidak
   const videoRef = useRef(null);
   const codeReaderRef = useRef(null);
+  // ✅ Simpan deviceId kamera yang dipilih sebelumnya
+const selectedCameraRef = useRef(null);
 
-  // ✅ Mulai Scan Saat Tombol Diklik
+
+// ✅ Mulai Scan Saat Tombol Diklik
 const startScanner = () => {
   setIsScanning(true);
   const codeReader = new BrowserMultiFormatReader();
@@ -26,16 +29,24 @@ const startScanner = () => {
         return;
       }
 
-      // 🔹 Cari kamera belakang (jika ada)
-      let backCamera = videoDevices.find(device => 
-        device.label.toLowerCase().includes("back") || 
-        device.label.toLowerCase().includes("environment")
-      );
+      let selectedDeviceId;
 
-      // Jika tidak ditemukan kamera belakang, gunakan kamera pertama
-      const selectedDeviceId = backCamera ? backCamera.deviceId : videoDevices[0].deviceId;
+      if (selectedCameraRef.current) {
+        // ✅ Gunakan kamera yang sudah dipilih sebelumnya
+        selectedDeviceId = selectedCameraRef.current;
+      } else {
+        // 🔹 Cari kamera belakang jika pertama kali scan
+        let backCamera = videoDevices.find(device => 
+          device.label.toLowerCase().includes("back") || 
+          device.label.toLowerCase().includes("environment")
+        );
 
-      // ✅ Mulai scanning dari kamera yang dipilih
+        // Jika tidak ada kamera belakang, gunakan kamera pertama
+        selectedDeviceId = backCamera ? backCamera.deviceId : videoDevices[0].deviceId;
+        selectedCameraRef.current = selectedDeviceId; // 🔥 Simpan kamera yang dipilih
+      }
+
+      // ✅ Mulai scanning dengan kamera yang sudah disimpan
       codeReader.decodeFromVideoDevice(selectedDeviceId, videoRef.current, (result, err) => {
         if (result) {
           console.log("✅ Barcode scanned:", result.getText());
@@ -53,14 +64,13 @@ const startScanner = () => {
     });
 };
 
-
-  // ✅ Hentikan Scanner
-  const stopScanner = () => {
-    if (codeReaderRef.current) {
-      codeReaderRef.current.reset();
-      setIsScanning(false);
-    }
-  };
+// ✅ Hentikan Scanner
+const stopScanner = () => {
+  if (codeReaderRef.current) {
+    codeReaderRef.current.reset();
+    setIsScanning(false);
+  }
+};
 
   // ✅ Fetch data aset berdasarkan kode
   const fetchAssetDetail = async (kodeAsset) => {
