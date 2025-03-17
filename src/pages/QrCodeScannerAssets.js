@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/library"; // 🔥 Tambahkan BarcodeFormat
+import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/library";
 import axios from "axios";
 import { FiCamera, FiSearch, FiXCircle } from "react-icons/fi";
 
@@ -9,15 +9,25 @@ export default function ScanAsset() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
-  const [scannedCode, setScannedCode] = useState(""); // 🔥 Simpan kode yang discan
+  const [scannedCode, setScannedCode] = useState("");
   const videoRef = useRef(null);
   const codeReaderRef = useRef(null);
   const selectedCameraRef = useRef(null);
 
+  // 🔹 **Hapus popup setelah 3 detik**
+  useEffect(() => {
+    if (scannedCode) {
+      const timer = setTimeout(() => {
+        setScannedCode(""); // Hapus setelah 3 detik
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [scannedCode]);
+
   // ✅ Mulai Scan Saat Tombol Diklik
   const startScanner = () => {
     setIsScanning(true);
-    setScannedCode(""); // 🔥 Reset barcode sebelumnya
+    setScannedCode("");
     const codeReader = new BrowserMultiFormatReader();
     codeReaderRef.current = codeReader;
 
@@ -33,8 +43,8 @@ export default function ScanAsset() {
         if (selectedCameraRef.current) {
           selectedDeviceId = selectedCameraRef.current;
         } else {
-          let backCamera = videoDevices.find(device => 
-            device.label.toLowerCase().includes("back") || 
+          let backCamera = videoDevices.find(device =>
+            device.label.toLowerCase().includes("back") ||
             device.label.toLowerCase().includes("environment")
           );
 
@@ -42,24 +52,23 @@ export default function ScanAsset() {
           selectedCameraRef.current = selectedDeviceId;
         }
 
-        // ✅ Pilih format barcode yang didukung
         const formats = [
-          BarcodeFormat.QR_CODE, 
-          BarcodeFormat.CODE_128, 
-          BarcodeFormat.CODE_39, 
+          BarcodeFormat.QR_CODE,
+          BarcodeFormat.CODE_128,
+          BarcodeFormat.CODE_39,
           BarcodeFormat.EAN_13,
           BarcodeFormat.UPC_A,
           BarcodeFormat.UPC_E
         ];
 
         codeReader.decodeFromVideoDevice(
-          selectedDeviceId, 
-          videoRef.current, 
+          selectedDeviceId,
+          videoRef.current,
           (result, err) => {
             if (result) {
               const scannedText = result.getText();
               console.log("✅ Barcode scanned:", scannedText);
-              setScannedCode(scannedText); // 🔥 Simpan barcode untuk ditampilkan di popup
+              setScannedCode(scannedText);
               fetchAssetDetail(scannedText);
               stopScanner();
             }
@@ -67,7 +76,7 @@ export default function ScanAsset() {
               console.warn("⚠ QR Code error:", err);
             }
           },
-          { formats } // 🔥 Pilih format barcode
+          { formats }
         );
       })
       .catch((err) => {
@@ -136,11 +145,12 @@ export default function ScanAsset() {
         </div>
       )}
 
-      {/* 🔹 POPUP HASIL SCAN */}
+      {/* 🔹 POPUP HASIL SCAN (Di Tengah Layar & Hilang Setelah 3 Detik) */}
       {scannedCode && (
-        <div className="fixed top-5 right-5 bg-white shadow-lg p-4 rounded-lg border">
+        <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
+                        bg-white shadow-lg p-6 rounded-lg border border-gray-300 text-center z-50">
           <h3 className="text-md font-semibold">✅ Barcode Terbaca</h3>
-          <p className="text-lg font-bold text-blue-600">{scannedCode}</p>
+          <p className="text-xl font-bold text-blue-600">{scannedCode}</p>
         </div>
       )}
 
